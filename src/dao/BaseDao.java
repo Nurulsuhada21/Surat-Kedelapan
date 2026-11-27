@@ -23,6 +23,9 @@ public abstract class BaseDao<T extends BaseEntity> {
 
     protected abstract T dariBaris(ResultSet r) throws SQLException;
 
+    protected abstract String kolomId();
+
+
     // ---------- alur yang sama untuk semua tabel ----------
 
     public void simpan(T objek) throws ValidationException, DataAccessException {
@@ -47,7 +50,7 @@ public abstract class BaseDao<T extends BaseEntity> {
         try (Connection c = Koneksi.buka();
              PreparedStatement ps = c.prepareStatement(sqlUpdate())) {
             isiParameter(ps, objek);
-            // tanda tanya terakhir milik WHERE id = ?
+            // tanda tanya terakhir milik WHERE <kolomId()> = ?
             ps.setInt(kolomData().length + 1, objek.getId());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
@@ -56,7 +59,7 @@ public abstract class BaseDao<T extends BaseEntity> {
     }
 
     public boolean hapus(int id) throws DataAccessException {
-        String sql = "DELETE FROM " + namaTabel() + " WHERE id = ?";
+        String sql = "DELETE FROM " + namaTabel() + " WHERE " + kolomId() + " = ?";
         try (Connection c = Koneksi.buka();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -67,7 +70,7 @@ public abstract class BaseDao<T extends BaseEntity> {
     }
 
     public List<T> ambilSemua() throws DataAccessException {
-        String sql = "SELECT * FROM " + namaTabel() + " ORDER BY id";
+        String sql = "SELECT * FROM " + namaTabel() + " ORDER BY " + kolomId();
         List<T> hasil = new ArrayList<T>();
         try (Connection c = Koneksi.buka();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -82,7 +85,7 @@ public abstract class BaseDao<T extends BaseEntity> {
     }
 
     public T cariId(int id) throws DataAccessException {
-        String sql = "SELECT * FROM " + namaTabel() + " WHERE id = ?";
+        String sql = "SELECT * FROM " + namaTabel() + " WHERE " + kolomId() + " = ?";
         try (Connection c = Koneksi.buka();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -108,7 +111,7 @@ public abstract class BaseDao<T extends BaseEntity> {
                     + "' bukan milik tabel " + namaTabel(), null);
         }
         String sql = "SELECT * FROM " + namaTabel()
-                + " WHERE " + kolom + " = ? ORDER BY id";
+                + " WHERE " + kolom + " = ? ORDER BY " + kolomId();
         List<T> hasil = new ArrayList<T>();
         try (Connection c = Koneksi.buka();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -161,7 +164,7 @@ public abstract class BaseDao<T extends BaseEntity> {
             if (i > 0) { sb.append(", "); }
             sb.append(kolom[i]).append(" = ?");
         }
-        sb.append(" WHERE id = ?");
+        sb.append(" WHERE ").append(kolomId()).append(" = ?");
         return sb.toString();
     }
 

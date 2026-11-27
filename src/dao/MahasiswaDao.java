@@ -31,6 +31,11 @@ public class MahasiswaDao extends BaseDao<Mahasiswa> {
     }
 
     @Override
+    protected  String kolomId() {
+        return "mahasiswa_id";
+    }
+
+    @Override
     protected Mahasiswa dariBaris(ResultSet r) throws SQLException {
         Mahasiswa p = new Mahasiswa();
         p.setId(r.getInt("mahasiswa_id"));

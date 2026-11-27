@@ -9,7 +9,7 @@ public abstract class  BaseEntity implements Identifiable {
         return id;
     }
     @Override
-    public void setId(){
+    public void setId(int id){
         this.id = id;
     }
     public boolean baru(){

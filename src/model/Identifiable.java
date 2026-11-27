@@ -2,5 +2,5 @@ package model;
 
 public interface Identifiable {
     int getId();
-    void setId();
+    void setId(int id);
 }
